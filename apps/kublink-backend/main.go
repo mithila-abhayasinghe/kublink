@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io"
+	"kublink-backend/internal/handlers"
 	"net/http"
 	"os"
 	"time"
@@ -11,7 +11,7 @@ import (
 func main() {
 
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", getRoot)
+	router.HandleFunc("GET /{shortUrl}", handlers.GetLongUrl)
 
 	server := &http.Server{
 		Addr:         ":8000",
@@ -29,9 +29,4 @@ func main() {
 		os.Exit(1)
 	}
 
-}
-
-func getRoot(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("GET / Root Request\n")
-	io.WriteString(w, "Kublink: URL Shortener\n")
 }
