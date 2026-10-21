@@ -11,16 +11,14 @@ var urls = map[string]string{
 }
 
 func GetLongUrl(w http.ResponseWriter, r *http.Request) {
-
 	shortUrl := r.PathValue("shortUrl")
-	fmt.Printf("GET /%s shorturl redirection\n", shortUrl)
-
 	longUrl, ok := urls[shortUrl]
 	if !ok {
-		fmt.Println("url not found")
+		fmt.Printf("/%s shortUrl not found\n", shortUrl)
 		http.NotFound(w, r)
 		return
 	}
+	fmt.Printf("GET /%s shortUrl redirection\n", shortUrl)
 	http.Redirect(w, r, longUrl, http.StatusTemporaryRedirect)
 
 }
