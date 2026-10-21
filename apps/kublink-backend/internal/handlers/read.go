@@ -18,9 +18,9 @@ func GetLongUrl(w http.ResponseWriter, r *http.Request) {
 	longUrl, ok := urls[shortUrl]
 	if !ok {
 		fmt.Println("url not found")
+		http.NotFound(w, r)
+		return
 	}
-
-	w.Header().Set("Location", longUrl)
-	w.WriteHeader(http.StatusTemporaryRedirect)
+	http.Redirect(w, r, longUrl, http.StatusTemporaryRedirect)
 
 }
