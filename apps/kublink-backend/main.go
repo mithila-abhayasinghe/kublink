@@ -12,6 +12,7 @@ func main() {
 
 	router := http.NewServeMux()
 	router.HandleFunc("GET /{shortUrl}", handlers.GetLongUrl)
+	router.HandleFunc("POST /api/v1/urls", handlers.CreateShortUrl)
 
 	server := &http.Server{
 		Addr:         ":8000",

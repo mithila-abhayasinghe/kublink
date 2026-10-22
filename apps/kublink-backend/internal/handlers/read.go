@@ -2,17 +2,14 @@ package handlers
 
 import (
 	"fmt"
+	"kublink-backend/internal/store"
 	"net/http"
 )
 
-var urls = map[string]string{
-	"gg":        "https://www.google.com",
-	"portfolio": "https://www.mithila.cc",
-}
-
 func GetLongUrl(w http.ResponseWriter, r *http.Request) {
 	shortUrl := r.PathValue("shortUrl")
-	longUrl, ok := urls[shortUrl]
+	url, ok := store.URLStore[shortUrl]
+	longUrl := url.OriginalUrl
 	if !ok {
 		fmt.Printf("/%s shortUrl not found\n", shortUrl)
 		http.NotFound(w, r)
