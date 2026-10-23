@@ -6,7 +6,7 @@ import (
 )
 
 type URLHandler struct {
-	Store      *store.URLStore
-	counter    atomic.Int64
-	CurrentURL string
+	Store   *store.URLStore
+	counter atomic.Int64
+	BaseURL string
 }

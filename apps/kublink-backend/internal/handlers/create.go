@@ -42,7 +42,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("POST /%s shortUrl created\n", id)
 
 	shortUrlResponse := requests.ShortUrlCreatedResponse{
-		ShortUrl: h.CurrentURL + "/" + id,
+		ShortUrl: h.BaseURL + "/" + id,
 	}
 	err = json.NewEncoder(w).Encode(shortUrlResponse)
 	if err != nil {

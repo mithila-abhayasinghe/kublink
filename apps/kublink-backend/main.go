@@ -23,8 +23,8 @@ func main() {
 	// Dependencies
 	urlStore := store.NewURLStore()
 	handler := &handlers.URLHandler{
-		Store:      urlStore,
-		CurrentURL: "http://localhost" + port,
+		Store:   urlStore,
+		BaseURL: "http://localhost" + port,
 	}
 
 	router := http.NewServeMux()
