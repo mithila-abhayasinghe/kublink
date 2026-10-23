@@ -25,12 +25,12 @@ func (r *URLStore) Get(k string) (types.URLs, bool) {
 
 func (r *URLStore) Set(k string, u types.URLs) {
 	r.mu.Lock()
-	defer r.mu.RUnlock()
+	defer r.mu.Unlock()
 	r.Data[k] = u
 }
 
 func (r *URLStore) Delete(k string) {
 	r.mu.Lock()
-	defer r.mu.RUnlock()
+	defer r.mu.Unlock()
 	delete(r.Data, k)
 }
