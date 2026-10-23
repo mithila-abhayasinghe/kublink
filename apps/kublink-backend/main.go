@@ -5,6 +5,7 @@ import (
 	"kublink-backend/internal/handlers"
 	"kublink-backend/internal/health"
 	"kublink-backend/internal/store"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -31,9 +32,11 @@ func main() {
 
 	// Dependencies
 	urlStore := store.NewURLStore()
+	logger := slog.NewJSONHandler(os.Stdout, nil)
 	handler := &handlers.URLHandler{
 		Store:   urlStore,
 		BaseURL: "http://localhost" + port,
+		Logger:  slog.New(logger),
 	}
 
 	router := http.NewServeMux()

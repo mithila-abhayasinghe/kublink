@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"kublink-backend/internal/requests"
 	"kublink-backend/internal/types"
 	"net/http"
@@ -26,6 +25,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 
 	var req requests.CreateShortUrlRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		h.Logger.Error("short url creation failed", "err", err.Error())
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: err.Error()})
 		return
@@ -36,7 +36,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 
 	_, err := url.Parse(req.OriginalUrl)
 	if err != nil {
-		fmt.Println("error: not a valid url")
+		h.Logger.Error("original url validation failed", "err", err.Error())
 		return
 	}
 
@@ -51,7 +51,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	h.Store.Set(id, newUrl)
 
 	w.WriteHeader(http.StatusCreated)
-	fmt.Printf("POST /%s shortUrl created\n", id)
+	h.Logger.Info("short url creation successfull", "short_url", id)
 
 	shortUrlResponse := requests.ShortUrlCreatedResponse{
 		ShortUrl: h.BaseURL + "/" + id,
