@@ -51,7 +51,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	h.Store.Set(id, newUrl)
 
 	w.WriteHeader(http.StatusCreated)
-	h.Logger.Info("short url creation successfull", "short_url", id)
+	h.Logger.Info("shorturl creation successfull", "short_url", id)
 
 	shortUrlResponse := requests.ShortUrlCreatedResponse{
 		ShortUrl: h.BaseURL + "/" + id,

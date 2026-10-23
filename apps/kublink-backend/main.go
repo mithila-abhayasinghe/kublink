@@ -32,11 +32,11 @@ func main() {
 
 	// Dependencies
 	urlStore := store.NewURLStore()
-	logger := slog.NewJSONHandler(os.Stdout, nil)
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	handler := &handlers.URLHandler{
 		Store:   urlStore,
 		BaseURL: "http://localhost" + port,
-		Logger:  slog.New(logger),
+		Logger:  logger,
 	}
 
 	router := http.NewServeMux()
@@ -53,7 +53,7 @@ func main() {
 		IdleTimeout:  120 * time.Second,
 	}
 
-	fmt.Println("Server starting on", port)
+	logger.Info("server starting", "port", port)
 	err := server.ListenAndServe()
 
 	if err != nil {
