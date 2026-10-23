@@ -5,15 +5,24 @@ import (
 	"net/http"
 )
 
+// GetLongUrl godoc
+//
+//	@Summary		Redirect to long URL
+//	@Description	Looks up a short URL identifier and redirects the client to the original URL
+//	@Tags			urls
+//	@Param			shortUrl	path		string	true	"Short URL identifier"
+//	@Success		307			{string}	string	"Temporary Redirect to original URL"
+//	@Failure		404			{string}	string	"Not Found"
+//	@Router			/{shortUrl} [get]
 func (h *URLHandler) GetLongUrl(w http.ResponseWriter, r *http.Request) {
 	shortUrl := r.PathValue("shortUrl")
 	url, ok := h.Store.Get(shortUrl)
-	longUrl := url.OriginalUrl
 	if !ok {
 		fmt.Printf("/%s shortUrl not found\n", shortUrl)
 		http.NotFound(w, r)
 		return
 	}
+	longUrl := url.OriginalUrl
 	fmt.Printf("GET /%s shortUrl redirection\n", shortUrl)
 	http.Redirect(w, r, longUrl, http.StatusTemporaryRedirect)
 

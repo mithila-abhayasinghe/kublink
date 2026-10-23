@@ -1,0 +1,128 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A URL shortener service in Go.",
+        "title": "Kublink: URL Shortener",
+        "contact": {},
+        "version": "0.1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/urls": {
+            "post": {
+                "description": "Takes a long URL and generates a unique short code shortcut",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "urls"
+                ],
+                "summary": "Create a short URL",
+                "parameters": [
+                    {
+                        "description": "Original URL Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.CreateShortUrlRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/requests.ShortUrlCreatedResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/requests.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/healthz": {
+            "get": {
+                "description": "Returns ok if the server is up and running",
+                "tags": [
+                    "system"
+                ],
+                "summary": "Server health check",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/{shortUrl}": {
+            "get": {
+                "description": "Looks up a short URL identifier and redirects the client to the original URL",
+                "tags": [
+                    "urls"
+                ],
+                "summary": "Redirect to long URL",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Short URL identifier",
+                        "name": "shortUrl",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "307": {
+                        "description": "Temporary Redirect to original URL",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "requests.CreateShortUrlRequest": {
+            "type": "object",
+            "properties": {
+                "original_url": {
+                    "type": "string"
+                }
+            }
+        },
+        "requests.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "requests.ShortUrlCreatedResponse": {
+            "type": "object",
+            "properties": {
+                "short_url": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

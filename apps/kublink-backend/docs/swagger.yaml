@@ -1,0 +1,84 @@
+basePath: /
+definitions:
+  requests.CreateShortUrlRequest:
+    properties:
+      original_url:
+        type: string
+    type: object
+  requests.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  requests.ShortUrlCreatedResponse:
+    properties:
+      short_url:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: A URL shortener service in Go.
+  title: 'Kublink: URL Shortener'
+  version: 0.1.0
+paths:
+  /{shortUrl}:
+    get:
+      description: Looks up a short URL identifier and redirects the client to the
+        original URL
+      parameters:
+      - description: Short URL identifier
+        in: path
+        name: shortUrl
+        required: true
+        type: string
+      responses:
+        "307":
+          description: Temporary Redirect to original URL
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+      summary: Redirect to long URL
+      tags:
+      - urls
+  /api/v1/urls:
+    post:
+      consumes:
+      - application/json
+      description: Takes a long URL and generates a unique short code shortcut
+      parameters:
+      - description: Original URL Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateShortUrlRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/requests.ShortUrlCreatedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/requests.ErrorResponse'
+      summary: Create a short URL
+      tags:
+      - urls
+  /healthz:
+    get:
+      description: Returns ok if the server is up and running
+      responses:
+        "200":
+          description: ok
+          schema:
+            type: string
+      summary: Server health check
+      tags:
+      - system
+swagger: "2.0"

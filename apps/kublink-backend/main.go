@@ -8,8 +8,17 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	_ "kublink-backend/docs"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title			Kublink: URL Shortener
+// @version		0.1.0
+// @description	A URL shortener service in Go.
+// @host			localhost:8000
+// @BasePath		/
 func main() {
 
 	port := func() string {
@@ -28,6 +37,7 @@ func main() {
 	}
 
 	router := http.NewServeMux()
+	router.Handle("/swagger/", httpSwagger.WrapHandler)
 	router.HandleFunc("GET /{shortUrl}", handler.GetLongUrl)
 	router.HandleFunc("POST /api/v1/urls", handler.CreateShortUrl)
 	router.HandleFunc("GET /healthz", health.HealthCheck)

@@ -11,11 +11,23 @@ import (
 	"time"
 )
 
+// CreateShortUrl godoc
+//
+//	@Summary		Create a short URL
+//	@Description	Takes a long URL and generates a unique short code shortcut
+//	@Tags			urls
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		requests.CreateShortUrlRequest	true	"Original URL Payload"
+//	@Success		201		{object}	requests.ShortUrlCreatedResponse
+//	@Failure		400		{object}	requests.ErrorResponse	"Bad Request"
+//	@Router			/api/v1/urls [post]
 func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 
 	var req requests.CreateShortUrlRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: err.Error()})
 		return
 	}
 
