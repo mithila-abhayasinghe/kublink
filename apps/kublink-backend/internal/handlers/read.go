@@ -2,13 +2,12 @@ package handlers
 
 import (
 	"fmt"
-	"kublink-backend/internal/store"
 	"net/http"
 )
 
-func GetLongUrl(w http.ResponseWriter, r *http.Request) {
+func (h *URLHandler) GetLongUrl(w http.ResponseWriter, r *http.Request) {
 	shortUrl := r.PathValue("shortUrl")
-	url, ok := store.URLStore[shortUrl]
+	url, ok := h.Store.Get(shortUrl)
 	longUrl := url.OriginalUrl
 	if !ok {
 		fmt.Printf("/%s shortUrl not found\n", shortUrl)

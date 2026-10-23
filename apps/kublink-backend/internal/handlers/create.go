@@ -4,20 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"kublink-backend/internal/requests"
-	"kublink-backend/internal/store"
 	"kublink-backend/internal/types"
 	"net/http"
 	"net/url"
 	"strconv"
-	"sync/atomic"
 	"time"
 )
 
-var counter atomic.Int64
-
-func CreateShortUrl(w http.ResponseWriter, r *http.Request) {
-
-	counter.Store(1)
+func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 
 	var req requests.CreateShortUrlRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -25,7 +19,8 @@ func CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := strconv.FormatInt(counter.Load(), 10)
+	newId := h.counter.Add(1)
+	id := strconv.FormatInt(newId, 10)
 
 	_, err := url.Parse(req.OriginalUrl)
 	if err != nil {
@@ -33,7 +28,7 @@ func CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url := types.URLs{
+	newUrl := types.URLs{
 		Id:          id,
 		OriginalUrl: req.OriginalUrl,
 		Alias:       "none",
@@ -41,10 +36,16 @@ func CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		ExpireAt:    time.Now().AddDate(0, 0, 2),
 	}
 
-	store.URLStore[id] = url
-	counter.Add(1)
+	h.Store.Set(id, newUrl)
 
 	w.WriteHeader(http.StatusCreated)
 	fmt.Printf("POST /%s shortUrl created\n", id)
 
+	shortUrlResponse := requests.ShortUrlCreatedResponse{
+		ShortUrl: h.CurrentURL + "/" + id,
+	}
+	err = json.NewEncoder(w).Encode(shortUrlResponse)
+	if err != nil {
+		return
+	}
 }
