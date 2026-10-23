@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"kublink-backend/internal/handlers"
+	"kublink-backend/internal/health"
 	"net/http"
 	"os"
 	"time"
@@ -13,6 +14,7 @@ func main() {
 	router := http.NewServeMux()
 	router.HandleFunc("GET /{shortUrl}", handlers.GetLongUrl)
 	router.HandleFunc("POST /api/v1/urls", handlers.CreateShortUrl)
+	router.HandleFunc("GET /healthz", health.HealthCheck)
 
 	server := &http.Server{
 		Addr:         ":8000",
