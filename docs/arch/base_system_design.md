@@ -55,7 +55,7 @@ www.mylongurl.com/long/is/annoying -> www.bit.ly/GHJ23 -> redirected to the firs
 
 ### Core Entities 
 
-- Originla URL 
+- Original URL 
 - Short URL 
 - User
 
@@ -132,3 +132,5 @@ User
 - redis high availability mode 
 - database replicas
 
+
+- pgx + pgxpool
