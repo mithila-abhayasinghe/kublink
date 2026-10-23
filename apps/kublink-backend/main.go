@@ -65,8 +65,7 @@ func main() {
 
 	go func() {
 		logger.Info("server starting", "port", port)
-		err := server.ListenAndServe()
-		if err != nil {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			logger.Error("error starting server", "err", err.Error())
 			os.Exit(1)
 		}
