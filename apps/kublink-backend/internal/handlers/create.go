@@ -7,6 +7,7 @@ import (
 	"kublink-backend/internal/store"
 	"kublink-backend/internal/types"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 )
@@ -22,6 +23,11 @@ func CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := strconv.Itoa(counter)
+
+	_, err := url.Parse(req.OriginalUrl)
+	if err != nil {
+		fmt.Println("error: not a valid url")
+	}
 
 	url := types.URLs{
 		Id:          id,
