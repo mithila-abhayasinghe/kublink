@@ -9,12 +9,15 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync/atomic"
 	"time"
 )
 
-var counter int = 1
+var counter atomic.Int64
 
 func CreateShortUrl(w http.ResponseWriter, r *http.Request) {
+
+	counter.Store(1)
 
 	var req requests.CreateShortUrlRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -22,11 +25,12 @@ func CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := strconv.Itoa(counter)
+	id := strconv.FormatInt(counter.Load(), 10)
 
 	_, err := url.Parse(req.OriginalUrl)
 	if err != nil {
 		fmt.Println("error: not a valid url")
+		return
 	}
 
 	url := types.URLs{
@@ -38,7 +42,7 @@ func CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	}
 
 	store.URLStore[id] = url
-	counter++
+	counter.Add(1)
 
 	w.WriteHeader(http.StatusCreated)
 	fmt.Printf("POST /%s shortUrl created\n", id)
