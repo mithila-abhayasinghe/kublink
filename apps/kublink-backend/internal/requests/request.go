@@ -7,3 +7,7 @@ type CreateShortUrlRequest struct {
 type ShortUrlCreatedResponse struct {
 	ShortUrl string `json:"short_url"`
 }
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
