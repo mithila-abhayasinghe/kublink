@@ -25,19 +25,19 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 
 	var req requests.CreateShortUrlRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		h.Logger.Error("short url creation failed", "err", err.Error())
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: err.Error()})
+		h.Logger.Warn("short url creation failed", "err", err.Error())
 		return
 	}
 
 	_, err := url.ParseRequestURI(req.OriginalUrl)
 	if err != nil {
-		h.Logger.Error("original url validation failed", "err", err.Error())
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: err.Error()})
+		h.Logger.Warn("original url validation failed", "err", err.Error())
 		return
 	}
 
