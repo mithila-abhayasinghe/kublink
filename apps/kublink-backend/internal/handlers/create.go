@@ -31,15 +31,15 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newId := h.counter.Add(1)
-	id := strconv.FormatInt(newId, 10)
-
 	_, err := url.ParseRequestURI(req.OriginalUrl)
 	if err != nil {
 		h.Logger.Error("original url validation failed", "err", err.Error())
 		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: err.Error()})
 		return
 	}
+
+	newId := h.counter.Add(1)
+	id := strconv.FormatInt(newId, 10)
 
 	newUrl := types.URLs{
 		Id:          id,
