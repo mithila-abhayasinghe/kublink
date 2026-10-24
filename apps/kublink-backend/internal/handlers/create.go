@@ -26,6 +26,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	var req requests.CreateShortUrlRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		h.Logger.Error("short url creation failed", "err", err.Error())
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: err.Error()})
 		return
@@ -42,20 +43,17 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 
 	newId := h.counter.Add(1)
 	id := strconv.FormatInt(newId, 10)
-
 	newUrl := types.URLs{
 		Id:          id,
 		OriginalUrl: req.OriginalUrl,
-		Alias:       "none",
+		Alias:       "",
 		CreatedAt:   time.Now(),
 		ExpireAt:    time.Now().AddDate(0, 0, 2),
 	}
-
 	h.Store.Set(id, newUrl)
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	h.Logger.Info("shorturl creation successfull", "short_url", id)
-
 	shortUrlResponse := requests.ShortUrlCreatedResponse{
 		ShortUrl: h.BaseURL + "/" + id,
 	}
@@ -63,4 +61,5 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
+	h.Logger.Info("shorturl creation successfull", "short_url", id)
 }
