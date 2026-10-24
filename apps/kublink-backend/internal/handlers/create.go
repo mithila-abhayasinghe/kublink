@@ -37,6 +37,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	_, err := url.Parse(req.OriginalUrl)
 	if err != nil {
 		h.Logger.Error("original url validation failed", "err", err.Error())
+		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: err.Error()})
 		return
 	}
 
