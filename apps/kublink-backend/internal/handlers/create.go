@@ -32,7 +32,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := url.ParseRequestURI(req.OriginalUrl)
+	parsedURL, err := url.ParseRequestURI(req.OriginalUrl)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
@@ -45,7 +45,7 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 	id := strconv.FormatInt(newId, 10)
 	newUrl := types.URLs{
 		Id:          id,
-		OriginalUrl: req.OriginalUrl,
+		OriginalUrl: parsedURL.String(),
 		Alias:       "",
 		CreatedAt:   time.Now(),
 		ExpireAt:    time.Now().AddDate(0, 0, 2),
