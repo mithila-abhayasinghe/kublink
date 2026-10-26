@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"kublink-backend/internal/handlers"
 	"kublink-backend/internal/health"
 	"kublink-backend/internal/store"
@@ -41,10 +42,9 @@ func main() {
 	}(port)
 
 	// Dependencies
-	urlStore := store.NewURLStore()
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	handler := &handlers.URLHandler{
-		Store:   urlStore,
+		Store:   store.NewMemoryStore(),
 		BaseURL: baseURL,
 		Logger:  logger,
 	}
@@ -65,7 +65,7 @@ func main() {
 
 	go func() {
 		logger.Info("server starting", "port", port)
-		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.Error("error starting server", "err", err.Error())
 			os.Exit(1)
 		}
