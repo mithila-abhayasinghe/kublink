@@ -50,16 +50,20 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		CreatedAt:   time.Now(),
 		ExpireAt:    time.Now().AddDate(0, 0, 2),
 	}
-	h.Store.Set(id, newUrl)
+
+	err = h.Store.Create(r.Context(), newUrl)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: err.Error()})
+		h.Logger.Warn("shorturl creation failed", "err", err.Error())
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	shortUrlResponse := requests.ShortUrlCreatedResponse{
 		ShortUrl: h.BaseURL + "/" + id,
 	}
-	err = json.NewEncoder(w).Encode(shortUrlResponse)
-	if err != nil {
-		return
-	}
-	h.Logger.Info("shorturl creation successfull", "short_url", id)
+	json.NewEncoder(w).Encode(shortUrlResponse)
+	h.Logger.Info("shorturl creation successful", "short_url", id)
 }
