@@ -15,8 +15,8 @@ import (
 //	@Router			/{shortUrl} [get]
 func (h *URLHandler) GetLongUrl(w http.ResponseWriter, r *http.Request) {
 	shortUrl := r.PathValue("shortUrl")
-	url, ok := h.Store.Get(shortUrl)
-	if !ok {
+	url, ok := h.Store.Get(r.Context(), shortUrl)
+	if ok != nil {
 		h.Logger.Warn("short url not found", "short_url", shortUrl)
 		http.NotFound(w, r)
 		return
