@@ -23,6 +23,17 @@ import (
 //	@Router			/api/v1/urls [post]
 func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 
+	if r.Header.Get("Content-Type") != "application/json" {
+		h.Logger.Warn("invalid content type", "content", r.Header.Get("Content-Type"))
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnsupportedMediaType)
+		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: "Content-Type header must be application/json"})
+		return
+		h.Logger.Warn("invalid content type", "content_type", r.Header.Get("Content-Type"))
+	}
+
+	r.Body = http.MaxBytesReader(w, r.Body, 1000000)
+
 	var req requests.CreateShortUrlRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.Header().Set("Content-Type", "application/json")
