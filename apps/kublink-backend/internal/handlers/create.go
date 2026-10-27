@@ -28,8 +28,8 @@ func (h *URLHandler) CreateShortUrl(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnsupportedMediaType)
 		json.NewEncoder(w).Encode(requests.ErrorResponse{Error: "Content-Type header must be application/json"})
-		return
 		h.Logger.Warn("invalid content type", "content_type", r.Header.Get("Content-Type"))
+		return
 	}
 
 	r.Body = http.MaxBytesReader(w, r.Body, 1000000)
